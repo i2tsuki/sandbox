@@ -28,7 +28,7 @@ spec:
         scheduler.alpha.kubernetes.io/critical-pod: ''
     spec:
       priorityClassName: system-node-critical
-      serviceAccountName: fluentd-gcp
+      serviceAccountName: default
       dnsPolicy: Default
       hostNetwork: true
       containers:
