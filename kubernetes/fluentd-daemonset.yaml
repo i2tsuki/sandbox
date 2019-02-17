@@ -31,6 +31,8 @@ spec:
       serviceAccountName: default
       dnsPolicy: Default
       hostNetwork: true
+      spec:
+      restartPolicy: Always
       containers:
       - name: fluentd-gcp
         # https://console.cloud.google.com/gcr/images/stackdriver-agents/GLOBAL/stackdriver-logging-agent?gcrImageListsize=30
