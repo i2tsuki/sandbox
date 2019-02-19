@@ -34,6 +34,8 @@ spec:
       spec:
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
+      securityContext:
+        runAsUser: 1000
       containers:
       - name: fluentd-gcp
         # https://console.cloud.google.com/gcr/images/stackdriver-agents/GLOBAL/stackdriver-logging-agent?gcrImageListsize=30
