@@ -40,6 +40,8 @@ spec:
       - name: fluentd-gcp
         # https://console.cloud.google.com/gcr/images/stackdriver-agents/GLOBAL/stackdriver-logging-agent?gcrImageListsize=30
         image: gcr.io/stackdriver-agents/stackdriver-logging-agent:1.6.3
+        securityContext:
+          runAsUser: 0
         volumeMounts:
         - name: var-log-containers
           mountPath: /var/log/containers
