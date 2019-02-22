@@ -43,9 +43,12 @@ spec:
         securityContext:
           runAsUser: 0
         volumeMounts:
-        - name: var-log-containers
-          mountPath: /var/log/containers
+        - name: var-log
+          mountPath: /var/log
           readOnly: true
+        - name: var-lib
+          mountPath: /var/lib
+          readOnly: false
         - name: var-lib-docker-containers
           mountPath: /var/lib/docker/containers
           readOnly: true
@@ -115,16 +118,19 @@ spec:
       #   effect: "NoExecute"
       # - operator: "Exists"
       #   effect: "NoSchedule"
-      # volumes:
-      # - name: var-log
-      #   hostPath:
-      #     path: /var/log
-      # - name: var-lib-docker-containers
-      #   hostPath:
-      #     path: /var/lib/docker/containers
-      # - name: config-volume
-      #   configMap:
-      #     name: fluentd-gcp-config-v1.6.3
+      volumes:
+      - name: var-log
+        hostPath:
+          path: /var/log
+      - name: var-lib
+        hostPath:
+          path: /var/lib
+      - name: var-lib-docker-containers
+        hostPath:
+          path: /var/lib/docker/containers
+      - name: config-volume
+        configMap:
+          name: fluentd-gcp-config-v1.6.3
 ---
 kind: ConfigMap
 apiVersion: v1
@@ -168,7 +174,7 @@ data:
     <source>
       @type tail
       path /var/log/containers/*.log
-      pos_file /var/lib/containers.log.pos
+      pos_file /var/lib/fluentd-containers.log.pos
       # Tags at this point are in the format of:
       # reform.var.log.containers.<POD_NAME>_<NAMESPACE_NAME>_<CONTAINER_NAME>-<CONTAINER_ID>.log
       tag reform.*
@@ -232,7 +238,7 @@ data:
       @type tail
       format /^time="(?<time>[^)]*)" level=(?<severity>[^ ]*) msg="(?<message>[^"]*)"( err="(?<error>[^"]*)")?( statusCode=($<status_code>\d+))?/
       path /var/log/docker.log
-      pos_file /var/log/docker.log.pos
+      pos_file /var/lib/fluentd-docker.log.pos
       tag docker
     </source>
 
