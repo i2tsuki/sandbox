@@ -297,7 +297,7 @@ data:
       @type record_transformer
       enable_ruby true
       <record>
-        message ${record['message'].length > 100000 ? "[Trimmed]#{record['message'][0..100000]}..." : record['message']}
+        message ${record['message'].length > 10000 ? "[Trimmed]#{record['message'][0..10000]}..." : record['message']}
       </record>
     </filter>
 
