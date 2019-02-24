@@ -1,0 +1,18 @@
+apiVersion: skaffold/v1beta5
+kind: Config
+build:
+  tagPolicy:
+    gitCommit: {}
+  artifacts:
+  - image: local/sandbox/fluentd
+    context: .
+    docker:
+      dockerfile: ./Dockerfile
+  local:
+    push: false
+    useDockerCLI: true
+    useBuildkit: true
+deploy:
+  kubectl:
+    manifests:
+      - ./10-fluentd-gcp-daemonset.yaml
