@@ -1,26 +1,23 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: fluentd-gcp-v1.6.3
+  name: fluentd-daemonset
   namespace: kube-system
   labels:
-    k8s-app: fluentd-gcp
+    k8s-app: fluentd-daemonset
     kubernetes.io/cluster-service: "true"
     addonmanager.kubernetes.io/mode: Reconcile
-    version: v1.6.3
 spec:
   selector:
     matchLabels:
-      k8s-app: fluentd-gcp
-      version: v1.6.3
+      k8s-app: fluentd-daemonset
   updateStrategy:
     type: RollingUpdate
   template:
     metadata:
       labels:
-        k8s-app: fluentd-gcp
         kubernetes.io/cluster-service: "true"
-        version: v1.6.3
+        k8s-app: fluentd-daemonset
       # This annotation ensures that fluentd does not get evicted if the node
       # supports critical pod annotation based priority scheme.
       # Note that this does not guarantee admission on the nodes (#40573).
@@ -37,7 +34,7 @@ spec:
       securityContext:
         runAsUser: 1000
       containers:
-      - name: fluentd-gcp
+      - name: fluentd
         # https://console.cloud.google.com/gcr/images/stackdriver-agents/GLOBAL/stackdriver-logging-agent?gcrImageListsize=30
         image: local/sandbox/fluentd
         securityContext:
@@ -52,8 +49,10 @@ spec:
         - name: var-lib-docker-containers
           mountPath: /var/lib/docker/containers
           readOnly: true
-        - name: config-volume
-          mountPath: /etc/google-fluentd/config.d
+        - name: fluentd-config-volume
+          mountPath: /fluentd/etc
+        - name: fluentd-config-directory-volume
+          mountPath: /fluentd/etc/config.d
         env:
         - name: NODE_NAME
           valueFrom:
@@ -128,9 +127,56 @@ spec:
       - name: var-lib-docker-containers
         hostPath:
           path: /var/lib/docker/containers
-      - name: config-volume
+      - name: fluentd-config-volume
         configMap:
-          name: fluentd-gcp-config-v1.6.3
+          name: fluentd-config
+      - name: fluentd-config-directory-volume
+        configMap:
+          name: fluentd-config-directory
+kind: ConfigMap
+apiVersion: v1
+data:
+  fluent.conf: |-
+    @include config.d/*.conf
+
+    # # Configure all sources to output to Google Cloud Logging
+    # <match **>
+    #   @type google_cloud
+    #   # Set the chunk limit conservatively to avoid exceeding the recommended
+    #   # chunk size of 5MB per write request.
+    #   buffer_chunk_limit 1M
+    #   # Flush logs every 5 seconds, even if the buffer is not full.
+    #   flush_interval 5s
+    #   # Enforce some limit on the number of retries.
+    #   disable_retry_limit false
+    #   # After 3 retries, a given chunk will be discarded.
+    #   retry_limit 3
+    #   # Wait 10 seconds before the first retry. The wait interval will be doubled on
+    #   # each following retry (20s, 40s...) until it hits the retry limit.
+    #   retry_wait 10
+    #   # Never wait longer than 5 minutes between retries. If the wait interval
+    #   # reaches this limit, the exponentiation stops.
+    #   # Given the default config, this limit should never be reached, but if
+    #   # retry_limit and retry_wait are customized, this limit might take effect.
+    #   max_retry_wait 300
+    #   # Use multiple threads for processing.
+    #   num_threads 8
+    #   detect_json true
+    #   # Enable metadata agent lookups.
+    #   enable_metadata_agent true
+    #   metadata_agent_url "http://local-metadata-agent.stackdriver.com:8000"
+    #   # Use the gRPC transport.
+    #   use_grpc true
+    #   # If a request is a mix of valid log entries and invalid ones, ingest the
+    #   # valid ones and drop the invalid ones instead of dropping everything.
+    #   partial_success true
+    #   # Enable monitoring via Prometheus integration.
+    #   enable_monitoring true
+    #   monitoring_type prometheus
+    # </match>
+metadata:
+  name: fluentd-config
+  namespace: kube-system
 ---
 kind: ConfigMap
 apiVersion: v1
@@ -383,5 +429,5 @@ data:
       adjust_invalid_timestamps false
     </match>
 metadata:
-  name: fluentd-gcp-config-v1.6.3
+  name: fluentd-config-directory
   namespace: kube-system
