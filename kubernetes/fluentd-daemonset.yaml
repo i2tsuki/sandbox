@@ -43,8 +43,8 @@ spec:
         - name: var-log
           mountPath: /var/log
           readOnly: true
-        - name: var-lib
-          mountPath: /var/lib
+        - name: var-lib-fluentd
+          mountPath: /var/lib/fluentd
           readOnly: false
         - name: var-lib-docker-containers
           mountPath: /var/lib/docker/containers
@@ -121,9 +121,9 @@ spec:
       - name: var-log
         hostPath:
           path: /var/log
-      - name: var-lib
+      - name: var-lib-fluentd
         hostPath:
-          path: /var/lib
+          path: /var/lib/fluentd
       - name: var-lib-docker-containers
         hostPath:
           path: /var/lib/docker/containers
