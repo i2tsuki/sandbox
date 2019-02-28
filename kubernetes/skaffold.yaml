@@ -4,7 +4,7 @@ build:
   tagPolicy:
     gitCommit: {}
   artifacts:
-  - image: local/sandbox/fluentd
+  - image: sandbox/fluentd
     context: .
     docker:
       dockerfile: ./Dockerfile
