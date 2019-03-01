@@ -15,4 +15,4 @@ build:
 deploy:
   kubectl:
     manifests:
-      - ./10-fluentd-gcp-daemonset.yaml
+    - ./fluentd-daemonset.yaml
