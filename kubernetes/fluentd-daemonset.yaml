@@ -28,11 +28,8 @@ spec:
       serviceAccountName: default
       dnsPolicy: Default
       hostNetwork: true
-      spec:
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
-      securityContext:
-        runAsUser: 1000
       containers:
       - name: fluentd
         # https://console.cloud.google.com/gcr/images/stackdriver-agents/GLOBAL/stackdriver-logging-agent?gcrImageListsize=30
