@@ -51,13 +51,11 @@ spec:
         - name: fluentd-config-directory-volume
           mountPath: /fluentd/etc/config.d
         env:
-        - name: NODE_NAME
+        - name: K8S_NODE_CONSTANTS
           valueFrom:
             fieldRef:
               apiVersion: v1
               fieldPath: spec.nodeName
-        - name: STACKDRIVER_METADATA_AGENT_URL
-          value: http://$(NODE_NAME):8799
         # Liveness probe is aimed to help in situarions where fluentd
         # silently hangs for no apparent reasons until manual restart.
         # The idea of this probe is that if fluentd is not queueing or
