@@ -36,6 +36,7 @@ spec:
         image: sandbox/fluentd
         securityContext:
           runAsUser: 0
+        command: ["fluentd", "-c", "/fluentd/etc/fluent.conf"]
         volumeMounts:
         - name: var-log
           mountPath: /var/log
