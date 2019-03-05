@@ -51,7 +51,11 @@ spec:
           mountPath: /fluentd/etc
         - name: fluentd-config-directory-volume
           mountPath: /fluentd/etc/config.d
+        - name: google-application-credentials
+          mountPath: /etc/google/auth
         env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: "/etc/google/auth/application_default_credentials.json"
         - name: K8S_NODE_CONSTANTS
           valueFrom:
             fieldRef:
@@ -129,6 +133,9 @@ spec:
       - name: fluentd-config-directory-volume
         configMap:
           name: fluentd-config-directory
+      - name: google-application-credentials
+        secret:
+          secretName: google-application-credentials
 kind: ConfigMap
 apiVersion: v1
 data:
