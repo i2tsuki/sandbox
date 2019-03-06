@@ -186,21 +186,6 @@ kind: ConfigMap
 apiVersion: v1
 data:
   containers.input.conf: |-
-    # This configuration file for Fluentd is used
-    # to watch changes to Docker log files that live in the
-    # directory /var/lib/docker/containers/ and are symbolically
-    # linked to from the /var/log/containers directory using names that capture the
-    # pod name and container name. These logs are then submitted to
-    # Google Cloud Logging which assumes the installation of the cloud-logging plug-in.
-    #
-    # Example
-    # =======
-    # A line in the Docker log file might look like this JSON:
-    #
-    # {"log":"2014/09/25 21:15:03 Got request with path wombat\\n",
-    #  "stream":"stderr",
-    #   "time":"2014-09-25T21:15:03.499185026Z"}
-    #
     # The original tag is derived from the log file's location.
     # For example a Docker container's logs might be in the directory:
     #  /var/lib/docker/containers/997599971ee6366d4a5920d25b79286ad45ff37a74494f262e3bc98d909d0a7b
@@ -256,16 +241,8 @@ data:
       @type record_reformer
       enable_ruby true
       <record>
-        # Extract local_resource_id from tag for 'k8s_container' monitored
-        # resource. The format is:
-        # 'k8s_container.<namespace_name>.<pod_name>.<container_name>'.
         "logging.googleapis.com/local_resource_id" ${"k8s_container.#{tag_suffix[4].rpartition('.')[0].split('_')[1]}.#{tag_suffix[4].rpartition('.')[0].split('_')[0]}.#{tag_suffix[4].rpartition('.')[0].split('_')[2].rpartition('-')[0]}"}
-        # Rename the field 'log' to a more generic field 'message'. This way the
-        # fluent-plugin-google-cloud knows to flatten the field as textPayload
-        # instead of jsonPayload after extracting 'time', 'severity' and
-        # 'stream' from the record.
         message ${record['log']}
-        # If 'severity' is not set, assume stderr is ERROR and stdout is INFO.
         severity ${record['severity'] || if record['stream'] == 'stderr' then 'ERROR' else 'INFO' end}
       </record>
       tag ${if record['stream'] == 'stderr' then 'raw.stderr' else 'raw.stdout' end}
@@ -355,24 +332,16 @@ data:
       @type null
     </match>
 
-    # Add a unique insertId to each log entry that doesn't already have it.
-    # This helps guarantee the order and prevent log duplication.
     <filter **>
       @type add_insert_ids
     </filter>
 
-    # This section is exclusive for k8s_container logs. These logs come with
-    # 'stderr'/'stdout' tags.
-    # We use a separate output stanza for 'k8s_node' logs with a smaller buffer
-    # because node logs are less important than user's container logs.
     <match {stderr,stdout}>
       @type google_cloud
 
       detect_json true
-      # Collect metrics in Prometheus registry about plugin activity.
       enable_monitoring true
       monitoring_type prometheus
-      # Allow log entries from multiple containers to be sent in the same request.
       split_logs_by_tag false
       # Set the buffer type to file to improve the reliability and reduce the memory consumption
       buffer_type file
@@ -390,9 +359,7 @@ data:
       flush_interval 5s
       # Never wait longer than 30 seconds between retries.
       max_retry_wait 30
-      # Disable the limit on the number of retries (retry forever).
       disable_retry_limit
-      # Use multiple threads for processing.
       num_threads 2
       use_grpc true
       # Skip timestamp adjustment as this is in a controlled environment with
