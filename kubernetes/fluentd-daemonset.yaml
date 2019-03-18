@@ -372,6 +372,12 @@ data:
       adjust_invalid_timestamps false
       enable_metadata_agent false
       use_metadata_service false
+
+      vm_id ""
+      vm_name ""
+      zone ""
+      k8s_cluster_name "minikube"
+      k8s_cluster_location "minikube"
     </match>
 
     # Attach local_resource_id for 'k8s_node' monitored resource.
