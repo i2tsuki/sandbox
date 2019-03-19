@@ -1,0 +1,36 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: logs-generator
+  namespace: default
+  labels:
+    app: logs-generator
+spec:
+  completions: 100
+  ttlSecondsAfterFinished: 300
+  template:
+    metadata:
+      labels:
+        app: logs-generator
+    spec:
+      restartPolicy: OnFailure
+      activeDeadlineSeconds: 300
+      securityContext:
+        runAsUser: 1000
+      containers:
+      - name: logs-generator
+        image: k8s.gcr.io/logs-generator:latest
+        imagePullPolicy: Always
+        env:
+          - name: LOGS_GENERATOR_LINES_TOTAL
+            value: "100"
+          - name: LOGS_GENERATOR_DURATION
+            value: "3m"
+        resources:
+          limits:
+            cpu: 100m
+            memory: 400Mi
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sh", "-c", "sleep 5s"]
