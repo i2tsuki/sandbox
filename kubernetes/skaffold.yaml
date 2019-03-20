@@ -1,17 +1,16 @@
-apiVersion: skaffold/v1beta5
+apiVersion: skaffold/v1beta6
 kind: Config
 build:
-  tagPolicy:
-    gitCommit: {}
   artifacts:
   - image: sandbox/fluentd
     context: .
     docker:
       dockerfile: ./Dockerfile
+  tagPolicy:
+    gitCommit: {}
   local:
     push: false
     useDockerCLI: true
-    useBuildkit: true
 deploy:
   kubectl:
     manifests:
