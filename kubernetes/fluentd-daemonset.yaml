@@ -393,29 +393,7 @@ data:
       </record>
     </filter>
 
-    <match **>
-      @type google_cloud
 
-      detect_json true
-      enable_monitoring true
-      monitoring_type prometheus
-      # Allow entries from multiple system logs to be sent in the same request.
-      split_logs_by_tag false
-      detect_subservice false
-      buffer_type file
-      buffer_path /var/log/fluentd-buffers/kubernetes.system.buffer
-      buffer_queue_full_action block
-      buffer_chunk_limit 512k
-      buffer_queue_limit 2
-      flush_interval 5s
-      max_retry_wait 30
-      disable_retry_limit
-      num_threads 2
-      use_grpc true
-      # Skip timestamp adjustment as this is in a controlled environment with
-      # known timestamp format. This helps with CPU usage.
-      adjust_invalid_timestamps false
-    </match>
 metadata:
   name: fluentd-config-directory
   namespace: kube-system
