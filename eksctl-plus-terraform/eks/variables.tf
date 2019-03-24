@@ -11,3 +11,8 @@ variable "aws_subnet_eks_cidr" {
   description = "CIDR Blocks for EKS Public Subnet"
   type = "list"
 }
+
+variable "aws_eks_cluster_name" {
+  description = "AWS EKS Cluster Name"
+  type = "string"
+}

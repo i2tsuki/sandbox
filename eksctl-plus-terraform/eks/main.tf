@@ -18,3 +18,11 @@ module "aws_vpc" {
   aws_subnet_lb_cidr = "${var.aws_subnet_lb_cidr}"
   aws_subnet_eks_cidr = "${var.aws_subnet_eks_cidr}"
 }
+
+module "aws_vpc_securitygroup" {
+  source = "../modules/vpc-securitygroup"
+
+  aws_vpc_id = "${module.aws_vpc.aws_vpc_id}"
+  aws_subnet_ids_eks = "${module.aws_vpc.aws_subnet_ids_eks}"
+  aws_eks_cluster_name = "${var.aws_eks_cluster_name}"
+}
