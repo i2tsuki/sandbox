@@ -17,6 +17,7 @@ module "aws_vpc" {
   aws_az = "${slice(data.aws_availability_zones.available.names,0,3)}"
   aws_subnet_lb_cidr = "${var.aws_subnet_lb_cidr}"
   aws_subnet_eks_cidr = "${var.aws_subnet_eks_cidr}"
+  aws_eks_cluster_name = "${var.aws_eks_cluster_name}"
 }
 
 module "aws_vpc_securitygroup" {
