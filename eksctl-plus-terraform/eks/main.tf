@@ -26,3 +26,9 @@ module "aws_vpc_securitygroup" {
   aws_subnet_ids_eks = "${module.aws_vpc.aws_subnet_ids_eks}"
   aws_eks_cluster_name = "${var.aws_eks_cluster_name}"
 }
+
+module "aws_iam" {
+  source = "../modules/iam"
+
+  aws_eks_cluster_name = "${var.aws_eks_cluster_name}"
+}
