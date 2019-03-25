@@ -65,6 +65,8 @@ data "template_file" "nodegroup" {
     max_size = 1
     role = "worker"
     instance_profile_arn = "${module.aws_iam.node_group_aws_instance_profile_arn}"
+    allow_ssh = "true"
+    ssh_public_key_path = "~/.ssh/id_rsa.pub"
   }
 }
 
