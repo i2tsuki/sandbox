@@ -28,6 +28,7 @@ RUN apt-get update -yq && \
 RUN gem install fluent-plugin-kubernetes_metadata_filter -v 2.1.6 --no-document && \
     gem install fluent-plugin-google-cloud -v 0.7.5 --no-document && \
     gem install fluent-plugin-record-reformer -v 0.9.1 --no-document && \
+    gem install fluent-plugin-rewrite-tag-filter -v 2.2.0 --no-document && \
     gem install fluent-plugin-detect-exceptions -v 0.0.12 --no-document && \
     gem install fluent-plugin-prometheus -v 1.3.0 --no-document && \
     gem install fluent-plugin-multi-format-parser -v 1.0.0 --no-document && \
