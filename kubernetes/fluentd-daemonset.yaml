@@ -25,7 +25,7 @@ spec:
         scheduler.alpha.kubernetes.io/critical-pod: ''
     spec:
       priorityClassName: system-node-critical
-      serviceAccountName: default
+      serviceAccountName: fluentd
       dnsPolicy: Default
       hostNetwork: true
       restartPolicy: Always
