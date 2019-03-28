@@ -262,7 +262,7 @@ data:
         message ${record['log']}
         severity ${record['severity'] || if record['stream'] == 'stderr' then 'ERROR' else 'INFO' end}
       </record>
-      remove_keys kubernetes.labels,docker,log
+      remove_keys labels,docker,log
     </filter>
 
     <match kubernetes.var.log.containers.**>
@@ -397,17 +397,6 @@ data:
       k8s_cluster_name "test"
       k8s_cluster_location "ap-northeast-1"
     </match>
-
-    # Attach local_resource_id for 'k8s_node' monitored resource.
-    <filter **>
-      @type record_transformer
-      enable_ruby true
-      <record>
-        "logging.googleapis.com/local_resource_id" ${"k8s_node.#{ENV['NODE_NAME']}"}
-      </record>
-    </filter>
-
-
 metadata:
   name: fluentd-config-directory
   namespace: kube-system
