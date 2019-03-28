@@ -33,7 +33,7 @@ spec:
       containers:
       - name: fluentd
         # https://console.cloud.google.com/gcr/images/stackdriver-agents/GLOBAL/stackdriver-logging-agent?gcrImageListsize=30
-        image: sandbox/fluentd
+        image: 133198495231.dkr.ecr.ap-northeast-1.amazonaws.com/fluentd-gcp
         securityContext:
           runAsUser: 0
         command: ["fluentd", "-c", "/fluentd/etc/fluent.conf"]
